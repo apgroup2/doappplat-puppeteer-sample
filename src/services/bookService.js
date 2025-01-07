@@ -50,8 +50,7 @@ class BookService {
                 defaultViewport: {
                     width: 1280,
                     height: 800
-                },
-                dumpio: true
+                }
             };
 
             console.log('Launching browser with options:', JSON.stringify(options, null, 2));
