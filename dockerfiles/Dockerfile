@@ -40,13 +40,13 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
 
 # Copy package files with correct ownership
-COPY --chown=pptruser:pptruser ../package*.json ./
+COPY --chown=pptruser:pptruser package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy the rest of the application with correct ownership
-COPY --chown=pptruser:pptruser .. .
+COPY --chown=pptruser:pptruser . .
 
 # Expose the port
 EXPOSE 8080
