@@ -24,7 +24,8 @@ class BookService {
         if (!this.browser) {
             this.browser = await puppeteer.launch({
                 args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                headless: 'new'
+                headless: 'new',
+                dumpio: true
             });
         }
     }
