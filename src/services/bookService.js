@@ -22,11 +22,40 @@ class BookService {
 
     async initialize() {
         if (!this.browser) {
-            this.browser = await puppeteer.launch({
-                args: ['--no-sandbox', '--disable-setuid-sandbox'],
-                headless: 'new',
-                dumpio: true
+            // Add environment info logging
+            console.log('Environment details:');
+            console.log('- Current user:', require('os').userInfo().username);
+            console.log('- Current directory:', process.cwd());
+            console.log('- Chrome path exists:', require('fs').existsSync('/usr/bin/chromium-browser'));
+            console.log('- Process memory:', process.memoryUsage());
+            console.log('- Environment variables:', {
+                PUPPETEER_EXECUTABLE_PATH: process.env.PUPPETEER_EXECUTABLE_PATH,
+                CHROME_PATH: process.env.CHROME_PATH,
+                NODE_ENV: process.env.NODE_ENV
             });
+
+            const options = {
+                headless: 'new',
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--disable-extensions',
+                    '--disable-software-rasterizer',
+                    '--window-size=1280,800',
+                    '--user-agent=GutenbergScraper/1.0 (+https://github.com/wadewegner/doappplat-puppeteer-sample) Chromium/120.0.0.0'
+                ],
+                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+                defaultViewport: {
+                    width: 1280,
+                    height: 800
+                },
+                dumpio: true
+            };
+
+            console.log('Launching browser with options:', JSON.stringify(options, null, 2));
+            this.browser = await puppeteer.launch(options);
         }
     }
 
@@ -46,9 +75,28 @@ class BookService {
         
         const browserPage = await this.browser.newPage();
         try {
-            await browserPage.setUserAgent('GutenbergScraper/1.0 (Educational Project)');
-            await browserPage.goto(searchUrl, { waitUntil: 'networkidle0' });
+            // Set headers to mimic a real browser and identify our bot
+            await browserPage.setExtraHTTPHeaders({
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+                'X-Bot-Info': 'GutenbergScraper - A tool for searching Project Gutenberg. Contact/Issues: https://github.com/wadewegner/doappplat-puppeteer-sample'
+            });
 
+            await browserPage.setUserAgent('GutenbergScraper/1.0 (+https://github.com/wadewegner/doappplat-puppeteer-sample) Chromium/120.0.0.0');
+            
+            console.log(`Navigating to ${searchUrl}`);
+            const response = await browserPage.goto(searchUrl, { 
+                waitUntil: 'networkidle0',
+                timeout: 30000 
+            });
+
+            if (!response || !response.ok()) {
+                throw new Error(`Failed to load page: ${response ? response.status() : 'no response'}`);
+            }
+
+            console.log('Page loaded successfully, starting evaluation');
             const books = await browserPage.evaluate((baseUrl) => {
                 const results = [];
                 const bookElements = document.querySelectorAll('.booklink');
