@@ -70,7 +70,7 @@ A demonstration project showing how to build an ethical web scraping application
 
 1. Build the container:
    ```bash
-   docker build -t gutenberg-scraper .
+   docker build -t gutenberg-scraper -f dockerfiles/Dockerfile .
    ```
 
 2. Run the container:
