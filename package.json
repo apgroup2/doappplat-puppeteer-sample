@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "NODE_ENV=development node src/index.js",
+    "prod": "NODE_ENV=production node src/index.js"
+  },
+  "name": "gutenberg-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "keywords": ["puppeteer", "web-scraping", "project-gutenberg", "docker", "digitalocean"],
+  "author": "",
+  "license": "ISC",
+  "description": "A demonstration of ethical web scraping using Puppeteer in a Docker container on DigitalOcean App Platform",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bootstrap": "^5.3.3",
+    "cheerio": "^1.0.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "puppeteer": "^23.11.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
