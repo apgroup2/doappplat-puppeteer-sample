@@ -18,6 +18,21 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
+async function process1() {
+    // Asynchronous operation for process 1
+    return new Promise(resolve => bookService.searchBooks('test', 1))
+  }
+  
+  async function process2() {
+    // Asynchronous operation for process 2
+    return new Promise(resolve => bookService.searchBooks('test', 2))
+  }
+  
+  async function process3() {
+    // Asynchronous operation for process 3
+    return new Promise(resolve => bookService.searchBooks('test', 3))
+  }
+
 app.get('/search', async (req, res) => {
     try {
         const { query, page = 1 } = req.query;
@@ -25,6 +40,14 @@ app.get('/search', async (req, res) => {
             return res.render('index', { error: 'Please enter a search query' });
         }
 
+        try {
+            const results = await Promise.all([process1(), process2(), process3()]);
+            console.log("All processes completed:", results);
+          } catch (error) {
+            console.error("An error occurred:", error);
+          }        
+
+        /*
         const books = await bookService.searchBooks(query, parseInt(page));
         res.render('results', { 
             books,
@@ -32,6 +55,7 @@ app.get('/search', async (req, res) => {
             currentPage: parseInt(page),
             error: null
         });
+        */
     } catch (error) {
         console.error('Search error:', error);
         res.render('results', { 

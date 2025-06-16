@@ -67,7 +67,7 @@ class BookService {
 
     async searchBooks(query, page = 1) {
         await this.initialize();
-        await rateLimiter.wait();
+        //await rateLimiter.wait();
 
         const itemsPerPage = 24;
         const searchUrl = `${this.baseUrl}/ebooks/search/?query=${encodeURIComponent(query)}&submit_search=Go!&start_index=${(page - 1) * itemsPerPage}`;
@@ -133,7 +133,7 @@ class BookService {
 
     async getBookDetails(bookUrl) {
         await this.initialize();
-        await rateLimiter.wait();
+        //await rateLimiter.wait();
 
         const browserPage = await this.browser.newPage();
         try {
